@@ -34,6 +34,8 @@ router.delete("/:cid/products/:pid", deleteProductInCartController);
 //RUTA PARA FINALIZAR LA COMPRA DE LOS PRODUCTOS EN EL CART
 router.get("/:cid/purchase", purchaseController)
 
+// http://localhost:8080/api/carts/654852965b10292027c03d11/purchase
+
 export default router;
 
 // DATOS PARA PROBAR EL PUT /:CID

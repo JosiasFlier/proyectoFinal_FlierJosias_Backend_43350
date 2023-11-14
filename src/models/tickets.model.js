@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+import shortid from "shortid";
 
 const ticketsCollection = "ticket";
 
 const ticketSchema = new mongoose.Schema({
-    code: { type: String, required: true, unique: true },
+    code: { type: String, required: true, unique: true, default: () => shortid.generate(), },
     purchase_datetime: { type: Date, default: Date.now, required: true },
     amount: { type: Number, required: true },
     purchaser: { type: String, required: true },
@@ -28,4 +29,7 @@ ticketSchema.pre("findOne", function () {
 });
 
 mongoose.set("strictQuery", false);
-export const ticketModel = mongoose.model(ticketsCollection, ticketSchema);
+
+const ticketModel = mongoose.model(ticketsCollection, ticketSchema);
+
+export default ticketModel

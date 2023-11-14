@@ -1,5 +1,7 @@
 import { CartService } from "../services/carts.service.js";
 import { ProductService } from "../services/products.service.js";
+import ticketModel from "../models/tickets.model.js";
+import userModel from "../models/user.model.js";
 
 // Función para obtener un carrito por su ID
 const getCartById = async (id) => {
@@ -271,23 +273,29 @@ export const deleteProductInCartController = async (req, res) => {
     }
 }
 
+//Finaliza la compra del carrito
 export const purchaseController = async (req, res) => {
     try {
         const cartId = req.params.cid
         const cart = await CartService.getAllByIdPopulate(cartId)
-        // console.log(cart)
+        const userEmail = req.session.user.email
 
-        let totalAmount = 0 // Monto total
-        const purchasedProducts = []; // Productos que se han comprado
+        let totalValue = 0 // Monto total de la compra
+        const purchasedProducts = []; // Array de la compra
 
 
-        // Filtrar los productos que se pueden comprar y actualizar el monto total
+        // Filtra los productos que tienen stock para comprar, y actualiza el stock
         const unprocessedProducts = cart.products.filter(item => {
             const product = item.product;
             if (product.stock >= item.quantity) {
-                product.stock -= item.quantity; // Actualizar stock del producto
-                totalAmount += product.price * item.quantity; // Actualizar monto total
-                purchasedProducts.push(item); // Agregar a los productos comprados
+                //Se actualiza el stock de cada producto
+                product.stock -= item.quantity; 
+                
+                //Calculo del monto total de la compra
+                totalValue += product.price * item.quantity;
+
+                //Se actualiza el Array de productos de la compra
+                purchasedProducts.push(item);
                 return false; // Producto comprado y procesado
             }
 
@@ -296,22 +304,36 @@ export const purchaseController = async (req, res) => {
 
         if (purchasedProducts.length === 0) return res.status(400).json({ error: 'No se pudo realizar ninguna compra' })
 
-        // Actualizar los stocks de los productos comprados
+        // Actualizar el stock de los productos en la base de datos de MONGO
         await Promise.all(purchasedProducts.map(async item => {
             const product = await ProductService.getById(item.product._id);
             product.stock -= item.quantity;
             await product.save();
         }));
 
-        console.log(unprocessedProducts)
-        console.log(totalAmount)
-        console.log(purchasedProducts)
+        // Guardo los datos necesarios para un ticket
+        const ticketDetails = {
+            amount: totalValue,
+            purchaser: userEmail,
+            products: purchasedProducts
+        }
 
+        //Creo un nuevo ticket en la base de datos de MONGO
+        const newTicket = await ticketModel.create(ticketDetails)
+
+        // Actualizar el carrito del usuario con los productos no procesados
+        const user = await userModel.findById(req.session.user._id).populate('cart').exec();
+        if (user.cart) {
+            user.cart.products = unprocessedProducts;
+            await user.cart.save(); //Guardo el carrito
+        }
 
         return res.status(200).json({
-            status: 'success',
-            message: 'Carrito comprado prueba',
-            payload: cart
+            status: 'Success',
+            message: 'Proceso de compra realizado con exito',
+            purchasedProducts,
+            unprocessedProducts,
+            ticket: newTicket
         });
     } catch (err) {
         console.log('Error al finalizar la compra:', err);
