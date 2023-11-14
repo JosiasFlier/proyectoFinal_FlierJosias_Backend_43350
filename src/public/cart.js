@@ -70,25 +70,7 @@ const deleteCart = async () => {
     }
 }
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     const purchase = document.getElementById('purchase');
-
-//     if (purchase) {
-//         const cartId = purchase.getAttribute('data-cart');
-
-//         purchase.addEventListener('click', async () => {
-//             console.log(cartId);
-//             try {
-//                 const response = await fetch(`/api/carts/${cartId}/purchase`, {
-//                     method: 'GET'
-//                 });
-//             } catch (err) {
-//                 console.log('Error en el proceso de compra', err)
-//             }
-//         });
-//     }
-// });
-
+//Evento para finalizar compra
 document.addEventListener('DOMContentLoaded', () => {
     const purchase = document.getElementById('purchase');
 
@@ -110,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     setTimeout(() => {
                         location.reload() 
-                    }, 4000);
+                    }, 5000);
 
                 } else {
                     const errorMessage = await response.text(); // Obtener el mensaje de error del cuerpo de la respuesta
@@ -127,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function displayThanksAlert() {
     Swal.fire({
         title: '¡¡Muchas Gracias!!',
-        icon: 'succes'
+        icon: 'success'
     });
 }
 

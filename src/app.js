@@ -11,6 +11,7 @@ import productsRouter from "./routes/products.router.js";
 import cartRouter from "./routes/carts.router.js";
 import viewsRouter from "./routes/views.router.js";
 import sessionsRouter from "./routes/sessions.router.js"
+import mailsRouter from './routes/mails.router.js'
 import { PORT, MONGO_DB_NAME, MONGO_URI } from "./utils.js";
 import { isLogged } from "./public/authenticationMidd.js";
 
@@ -75,6 +76,9 @@ try {
     // Ruta para renderizar las vistas de handlebars
     app.use('/api/sessions', sessionsRouter); //sesiones
     app.use("/products", viewsRouter); 
+
+    // Ruta para el envio de e-mails
+    app.use('/email', mailsRouter)
 
     // Ruta en desarrollo
     app.get("/desarrollo", (req, res) => res.render("enDesarrollo"));

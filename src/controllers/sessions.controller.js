@@ -1,3 +1,5 @@
+import UserDTO from "../dto/users.dto.js"
+
 // Controlador para la vista de registro
 export const userRegisterViewController = async (req, res) => {
     if (req.session.user) return res.redirect('/api/sessions/profile')
@@ -46,7 +48,16 @@ export const userFailRegisterController = async (req, res) => {
 // Controlador para la ruta 'current'
 export const currentController = async (req, res) => {
     if (!req.session.user) return res.status(401).json({ status: 'error', error: 'No session detected!' })
-    res.status(200).json({ status: 'success', payload: req.session.user })
+    const userData = {
+        first_name: req.user.first_name,
+        last_name: req.user.last_name,
+        email: req.user.email,
+        age: req.user.age,
+        role: req.user.role
+    }
+
+    const userDTO = new UserDTO(userData)
+    res.status(200).json({ status: 'success', payload: userDTO })
 }
 
 // Controlador para la solicitud POST de inicio de sesión
