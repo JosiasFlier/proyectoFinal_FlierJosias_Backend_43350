@@ -6,21 +6,23 @@ import handlebars from "express-handlebars";
 import { Server } from "socket.io";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js"
+import errorHandler from './middlewares/error.middleware.js'
 
+// ROUTERS
 import productsRouter from "./routes/products.router.js";
 import cartRouter from "./routes/carts.router.js";
 import viewsRouter from "./routes/views.router.js";
 import sessionsRouter from "./routes/sessions.router.js"
 import mailsRouter from './routes/mails.router.js'
+import mockingRouter from './routes/mocking.router.js'
+
 import { PORT, MONGO_DB_NAME, MONGO_URI } from "./utils.js";
 import { isLogged } from "./public/authenticationMidd.js";
 
 
-// import productsModel from "./models/products.model.js";
-
-
 const app = express();
 app.use(express.json()); //Para que lea los datos en JSON
+app.use(errorHandler) // Midd con mensaje de error
 app.use(urlencoded({ extended: true }));
 
 // Configuración de la sesión
@@ -70,6 +72,7 @@ try {
         res.redirect("/products");
         });
     
+    // DAO
     app.use("/api/products", productsRouter);
     app.use("/api/carts", cartRouter);
     
@@ -80,8 +83,9 @@ try {
     // Ruta para el envio de e-mails
     app.use('/email', mailsRouter)
 
-    // Ruta en desarrollo
+    // Ruta en desarrollo - testing - errores
     app.get("/desarrollo", (req, res) => res.render("enDesarrollo"));
+    app.use('/mockingproducts', mockingRouter); // Generar productos aleatorios con Faker(Mock)
 
     // 'connection' palabra reservada, es un evento, para detectar
     // cuando se realiza una coneccion con el cliente

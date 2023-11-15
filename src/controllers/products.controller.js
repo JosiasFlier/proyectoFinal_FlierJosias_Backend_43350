@@ -1,3 +1,6 @@
+import CustomError from "../services/errors/custom_errors.js";
+import EErrors from "../services/errors/enums.js";
+import { generateProductErrorInfo } from "../services/errors/info.js";
 import { ProductService } from "../services/products.service.js";
 
 // Función para obtener todos los productos
@@ -38,6 +41,15 @@ export const getProductByIdController = async (req, res) => {
 export const createProductController = async (req, res) => {
     try {
         const product = req.body //Obtiene los datos del producto
+
+        if (!product.title || !product.price || !product.description || !product.code  || !product.stock || !product.category){
+            CustomError.createError({
+            name: "Product creation Error",
+            cause: generateProductErrorInfo(product),
+            message: "Error typing to create a product",
+            code: EErrors.INVALID_TYPES_ERROR
+            })
+        }
 
         // Crea el producto nuevo
         const addProduct = await ProductService.create(product)
