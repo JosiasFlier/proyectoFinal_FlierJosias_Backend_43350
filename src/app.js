@@ -56,7 +56,14 @@ try {
     await mongoose.connect(`${MONGO_URI}${MONGO_DB_NAME}`)
     
     // SERVIDOR
-    const serverHttp = app.listen(PORT, () => logger.info(`Server Up in PORT ${PORT}`));
+    const serverHttp = app.listen(PORT, () => {
+        logger.error(`Server Up in PORT ${PORT}`)
+        logger.warning(`Server Up in PORT ${PORT}`)
+        logger.info(`Server Up in PORT ${PORT}`)
+        logger.http(`Server Up in PORT ${PORT}`)
+        logger.debug(`Server Up in PORT ${PORT}`)
+        logger.fatal(`Server Up in PORT ${PORT}`)
+    } );
 
     // SOCKET
     const io = new Server(serverHttp);
