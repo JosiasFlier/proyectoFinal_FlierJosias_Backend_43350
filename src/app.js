@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 import passport from "passport";
 import initializePassport from "./config/passport.config.js"
 import errorHandler from './middlewares/error.middleware.js'
+import logger from "./logger.js";
 
 // ROUTERS
 import productsRouter from "./routes/products.router.js";
@@ -55,7 +56,7 @@ try {
     await mongoose.connect(`${MONGO_URI}${MONGO_DB_NAME}`)
     
     // SERVIDOR
-    const serverHttp = app.listen(PORT, () => console.log(`Server Up in PORT ${PORT}`));
+    const serverHttp = app.listen(PORT, () => logger.info(`Server Up in PORT ${PORT}`));
 
     // SOCKET
     const io = new Server(serverHttp);
