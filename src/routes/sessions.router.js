@@ -23,4 +23,9 @@ router.get('/current', currentController) // Ruta Current
 router.post('/login', passport.authenticate('login', { failureRedirect: '/sessions/failRegister' }), postLoginController) // Ruta para el inicio de sesión
 router.post('/register', passport.authenticate("register", { failureRedirect: "/sessions/failRegister" }), postRegisterController) // Ruta para el registro
 
+// Ruta para recuperar la contraseña
+router.get('/forget-password', async (req, res) => {
+    res.render('forgetPassword')
+})
+
 export default router

@@ -6,15 +6,28 @@ body {
 }
 .card {
     background-color: rgba(255, 255, 255, 0.5); /* Color de fondo de la tarjeta con opacidad */
+    border-radius: 10px;
+}
+
+.title-background{
+    background-color:#350222;
+}
+
+.titles-log-reg{
+    background-color:#2b020c;
+    text-align: center;
+    border-radius: 10px;
 }
 
 .title-td {
     background-color: #2b020c;
+    margin-bottom: 0 !important;
     text-align: center;
     color: white;
     font-weight: bold;
     font-size: 3em;
     font-style: italic;
+    border-radius: 5px;
 }
 
 .white-text {
@@ -35,6 +48,7 @@ body {
 
 .filter-bar {
     background-color: rgba(225, 225, 225, 0.812);
+    border-radius: 10px;
 }
 
 .card-border {
