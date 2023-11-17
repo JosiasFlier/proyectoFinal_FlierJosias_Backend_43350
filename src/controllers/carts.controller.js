@@ -2,6 +2,7 @@ import { CartService } from "../services/carts.service.js";
 import { ProductService } from "../services/products.service.js";
 import ticketModel from "../models/tickets.model.js";
 import userModel from "../models/user.model.js";
+import logger from "../logger.js";
 
 // Función para obtener un carrito por su ID
 const getCartById = async (id) => {
@@ -15,7 +16,7 @@ export const getCartsController = async (req, res) => {
         const carts = await CartService.getAll()
         res.status(200).json(carts);
     } catch (error) {
-        console.log("Error al obtener los carritos:", error);
+        logger.error("Error al obtener los carritos:", error);
         res.status(500).json({ error: "Error en el servidor" });
     }
 }
@@ -34,7 +35,7 @@ export const getCartByIdController = async (req, res) => {
 
         res.status(200).json({ status: "Success", payload: cart });
     } catch (err) {
-        console.log("Error en el carrito:", err);
+        logger.error("Error en el carrito:", err);
         res.status(500).json({ error: "Error en el servidor" });
     }
 }
@@ -45,7 +46,7 @@ export const createNewCartController = async (req, res) => {
         const newCart = await CartService.create({ products: [] });
         res.status(201).json({ status: "Success", payload: newCart });
     } catch (err) {
-        console.log("Error al crear el carrito", err);
+        logger.error("Error al crear el carrito", err);
         return res.status(500).json({ status: "Error", error: err.message });
     }
 }
@@ -89,7 +90,7 @@ export const newProductForCartController = async (req, res) => {
         const result = await cart.save();
         res.status(201).json({ status: "success", payload: result });
     } catch (err) {
-        console.log("Error al cargar productos al carrito", err);
+        logger.error("Error al cargar productos al carrito", err);
         return res.status(500).json({ status: "Error", error: err.message });
     }
 }
@@ -118,7 +119,7 @@ export const updateCartController = async (req, res) => {
             payload: cartUpdated,
         });
     } catch (err) {
-        console.log("Error al actualizar el carrito", err);
+        logger.error("Error al actualizar el carrito", err);
         return res.status(500).json({ status: "Error", error: err.message });
     }
 
@@ -131,7 +132,7 @@ export const updateProductInCartController = async (req, res) => {
         const productId = req.params.pid;
         const { quantity } = req.body;
 
-        console.log(quantity)
+        logger.debug(quantity)
 
         // Se comprueba si "quantity" es un numero entero positivo
         if (!Number.isInteger(quantity) || quantity < 1) {
@@ -141,7 +142,7 @@ export const updateProductInCartController = async (req, res) => {
         // Se busca y obtiene el carrito con el ID proporcionado
         const cart = await CartService.getByIdJSON(cartId)
 
-        console.log(cart)
+        logger.debug({cart})
 
         // Si no se encuentra el carrito, se responde con un código de estado 404 y un mensaje de error.
         if (!cart) {
@@ -149,7 +150,7 @@ export const updateProductInCartController = async (req, res) => {
             return;
         }
 
-        console.log(productId)
+        logger.debug(productId)
         
 
         // Se busca el índice del producto en el array de productos dentro del carrito
@@ -158,7 +159,7 @@ export const updateProductInCartController = async (req, res) => {
         );
 
 
-        console.log(existingProductIndex)
+        logger.debug(existingProductIndex)
 
         // Si no se encuentra el producto en el carrito, se responde con un código de estado 404 y un mensaje de error.
         if (existingProductIndex === -1) {
@@ -173,7 +174,7 @@ export const updateProductInCartController = async (req, res) => {
         // Se actualiza la cantidad del producto en la posición correspondiente del array
         const updatedProducts = [...cart.products];
 
-        console.log(updatedProducts)
+        logger.debug(updatedProducts)
         updatedProducts[existingProductIndex].quantity = quantity;
 
 
@@ -187,7 +188,7 @@ export const updateProductInCartController = async (req, res) => {
             payload: result,
         });
     } catch (err) {
-        console.log("Error al actualizar el carrito", err);
+        logger.error("Error al actualizar el carrito", err);
         return res.status(500).json({ status: "Error", error: err.message });
     }
 }
@@ -216,7 +217,7 @@ export const deleteCartController = async (req, res) => {
             cart: updatedCart,
         });
     } catch (err) {
-        console.log("Error al eliminar el carrito", err);
+        logger.error("Error al eliminar el carrito", err);
         return res.status(500).json({ status: "Error", error: err.message });
     }
 }
@@ -268,7 +269,7 @@ export const deleteProductInCartController = async (req, res) => {
             payload: updatedCart
         });
     } catch (err) {
-        console.log("Error al eliminar el producto del carrito", err);
+        logger.error("Error al eliminar el producto del carrito", err);
         return res.status(500).json({ status: "Error", error: err.message });
     }
 }
@@ -336,7 +337,7 @@ export const purchaseController = async (req, res) => {
             ticket: newTicket
         });
     } catch (err) {
-        console.log('Error al finalizar la compra:', err);
+        logger.error('Error al finalizar la compra:', err);
         res.status(500).json({ error: 'Error en el servidor' });
     }
 }

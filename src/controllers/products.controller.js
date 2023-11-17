@@ -2,6 +2,7 @@ import CustomError from "../services/errors/custom_errors.js";
 import EErrors from "../services/errors/enums.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
 import { ProductService } from "../services/products.service.js";
+import logger from "../logger.js";
 
 // Función para obtener todos los productos
 const getAllProducts = async () => {
@@ -10,7 +11,7 @@ const getAllProducts = async () => {
 
 //Traer todos los productos (Paginados)
 export const getProductsController = async (req, res) => {
-    console.log("¡router.get dataaa desde controller Nueva!"); // Imprime un mensaje en la consola
+    logger.debug("¡router.get dataaa desde controller Nueva!"); // Imprime un mensaje en la consola
     const result = await ProductService.getAllPaginate(req)
     res.status(result.statusCode).json(result.response)               
     
@@ -20,7 +21,7 @@ export const getProductsController = async (req, res) => {
 export const getProductByIdController = async (req, res) => {
     try{
         const pid = req.params.pid
-        console.log(pid)
+        logger.debug(pid)
 
         // Llamar al método getById del ProductService para obtener el producto por su ID
         const product = await ProductService.getById(pid)
@@ -32,7 +33,7 @@ export const getProductByIdController = async (req, res) => {
             res.status(404).json({ error: 'producto no encontrado'})
         }
     } catch (err) {
-        console.log("Error al leer el producto", err)
+        logger.error("Error al leer el producto", err)
         res.status(500).json({status: 'error', error: err.message})
     }
 }
@@ -61,7 +62,7 @@ export const createProductController = async (req, res) => {
         req.app.get("socketio").emit("updatedProducts", products);
         res.status(201).json({ status: "success", payload: addProduct });
     } catch (err) {
-        console.log(err)
+        logger.error("Error al crear el producto", err)
         res.status(500).json({ status: "Error al crear el producto", error: err.message })
     }
 }
@@ -85,7 +86,7 @@ export const updatedProductController = async (req, res) => {
         req.app.get("socketio").emit("updatedProducts", products)
         res.status(201).json({ status: "success", payload: updatedProducts })
     } catch (err) {
-        console.log(err)
+        logger.error("Error al actualizar los datos del producto", err)
         res.status(500).json({ status: "Error al actualizar el producto", error: err.message })
     }
 }
@@ -108,7 +109,7 @@ export const deleteProductController = async (req, res) =>  {
         res.status(201).json({ status: "Producto eliminado con éxito", payload: deleteProduct })
 
     } catch (err) {
-        console.log(err)
+        logger.error("Error al eliminar el producto", err)
         res.status(500).json({ status: "Error al eliminar el producto", error: err.message })
     }
 }

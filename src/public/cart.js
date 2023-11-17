@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     displayErrorAlert(errorMessage);
                 }
             } catch (err) {
-                console.log('Error en el proceso de compra', err);
+                console.log(err.message);
             }
         });
     }

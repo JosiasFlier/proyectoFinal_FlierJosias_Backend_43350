@@ -1,4 +1,5 @@
 import UserDTO from "../dto/users.dto.js"
+import logger from "../logger.js"
 
 // Controlador para la vista de registro
 export const userRegisterViewController = async (req, res) => {
@@ -8,7 +9,7 @@ export const userRegisterViewController = async (req, res) => {
 
 // Controlador para la vista de inicio de sesión
 export const userLoginViewController = async (req, res) => {
-    if (req.session.user) return res.redirect('/products')
+    if (req.session.user) return res.redirect('/api/sessions/profile')
     res.render('login')
 }
 
@@ -20,14 +21,21 @@ export const userProfileViewController = async (req, res) => {
         email: req.user.email,
         age: req.user.age,
     }
-    console.log(userData)
-    res.render('profile', userData)
+    const userInfo = {
+        cartId: req.session.user.cart,
+        first_name: req.session.user.first_name,
+        last_name: req.session.user.last_name,
+        fullName: `${req.session.user.first_name} ${req.session.user.last_name}`,
+        role: req.session.user.role
+    }
+    logger.info({userInfo})
+    res.render('profile', {userData, userInfo})
 }
 
 // Controlador para cerrar sesión
 export const userLogoutController = async (req, res) => {
     req.session.destroy((err) => {
-        if (err) return console.log(err.message) // Manejo de error más robusto requerido aquí
+        if (err) return logger.error(err.message) // Manejo de error más robusto requerido aquí
         res.redirect('/api/sessions/login')
     })
 }
@@ -67,7 +75,7 @@ export const postLoginController = async (req, res) => {
         return res.status(200).json({ status: 'success', message: 'Sesión iniciada correctamente' })
 
     } catch (err) {
-        console.log("Error en el inicio de sesión", err);
+        logger.error("Error en el inicio de sesión", err);
         return res.status(500).json({ error: 'Error en el servidor.' });
     }
 }
@@ -84,7 +92,7 @@ export const postRegisterController = async (req, res) => {
 
         return res.status(201).json({ status: 'success', message: `${first_name} ${last_name}, se a registrado correctamente`, user: user })
     } catch (err) {
-        console.log(err.message);
+        logger.error(err.message);
         return res.status(500).json({ message: 'Error en el servidor.' });
     }
 }

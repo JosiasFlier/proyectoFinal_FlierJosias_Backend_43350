@@ -1,3 +1,8 @@
+
+const cartLink = document?.getElementById("cart");
+const hrefValue = cartLink?.getAttribute("href");
+const cartId = hrefValue?.match(/\/products\/carts\/(.+)/)[1];
+
 const addProductToCart = async (id, cartId) => {
     try {
         const res = await fetch(`/api/carts/${cartId}/products/${id}`, {
@@ -27,8 +32,7 @@ const addProductToCart = async (id, cartId) => {
 };
 
 
-
-const addProductToCart2 = async (pid, cartId) => {
+const addProductToCart2 = async (pid) => {
     try {
         console.log(cartId)
         const res = await fetch(`/api/carts/${cartId}/products/${pid}`, {

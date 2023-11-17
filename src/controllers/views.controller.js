@@ -1,6 +1,8 @@
 import { ProductService } from "../services/products.service.js";
 import productModel from "../models/products.model.js";
 import cartModel  from "../models/carts.model.js";
+import logger from "../logger.js";
+import { Logger } from "winston";
 
 // Controlador para obtener una lista de productos con filtros opcionales
 export const getProductController = async (req, res) => {
@@ -46,10 +48,11 @@ export const getProductController = async (req, res) => {
 
         // const products = await productModel.paginate(filter, options);
         const products = await ProductService.getAllPaginateView(filter, options);
+
         res.render("products", { products, userInfo });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error });
+    } catch (err) {
+        logger.error("Error al obtener todos los productos", err)
+        res.status(500).json({ error: err });
     }
 }
 
@@ -70,7 +73,7 @@ export const getHomeController = async (req, res) => {
             ? `/products?limit=${itemsPorPage}&page=${products.nextPage}`
             : "";
 
-        console.log(products);
+        logger.debug({products});
 
         const userInfo = {
             first_name: req.session.user.first_name,
@@ -83,9 +86,9 @@ export const getHomeController = async (req, res) => {
         };
 
         res.render("home", { products, userInfo });
-    } catch (error) {
-        console.log("Error al leer los productos:", error);
-        res.status(500).json({ error: "Error al leer los productos" });
+    } catch (err) {
+        logger.error("Error al leer los productos:", err);
+        res.status(500).json({ error: "Error al leer los productos", Error: err });
     }
 }
 
@@ -104,9 +107,9 @@ export const realTimeProductsController = async (req, res) => {
             role: req.session.user.role
         };
         res.render("realTimeProducts", { products: allProducts, userInfo });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: error });
+    } catch (err) {
+        logger.error("Error al obtener la lista de productos", err)
+        res.status(500).json({ error: err });
     }
 }
 
@@ -132,8 +135,9 @@ export const productDetailController = async (req, res) => {
         };
 
         res.render("productDetail", {product, userInfo});
-    } catch (error) {
-        res.status(500).json({ error: "Error al leer los productos" });
+    } catch (err) {
+        logger.error("Error al obtener los detalles del producto", err)
+        res.status(500).json({ error: "Error al leer los productos", Error: err });
     }
 }
 
@@ -158,8 +162,9 @@ export const cartController = async (req, res) => {
 
 
         res.render('carts', { cid: result._id, cart: result.products, userInfo});
-    } catch (error) {
-        res.status(500).json({ status: 'error', error: error.message });
+    } catch (err) {
+        logger.error("Error al obtener los datos del carrito", err)
+        res.status(500).json({ status: 'error', error: err.message });
     }
 }
 

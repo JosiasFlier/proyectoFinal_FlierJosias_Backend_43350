@@ -3,6 +3,7 @@ import localStrategy  from "passport-local";
 import GithubStrategy from 'passport-github2';
 import userModel  from "../models/user.model.js"
 import cartModel from "../models/carts.model.js";
+import logger from "../logger.js";
 
 import bcrypt from "bcryptjs";
 import { isAuthorizedAdmin } from "../public/authenticationMidd.js";
@@ -41,7 +42,7 @@ const initializePassport = () => {
     
             return done(null, savedUser);
         } catch (error) {
-            console.log(error.message);
+            logger.error("Error al iniciar Passport", error.message);
             return done(error);
             }
     }))
@@ -60,7 +61,7 @@ const initializePassport = () => {
 
                     return done(null, user);
                 } catch (error) {
-                    console.error("Error en el proceso de autenticación:", error);
+                    logger.error("Error en el proceso de autenticación:", error);
                     return done(new Error("Ha ocurrido un error en el proceso de autenticación."));
                 }
             }
@@ -72,7 +73,7 @@ const initializePassport = () => {
         clientSecret: '3e67608ee55c8aad29f52be2c8776f70842f24f6',
         callbackURL: 'http://localhost:8080/api/sessions/githubcallback'
     }, async (accessToken, refreshToken, profile, done) => {
-        console.log(profile)
+        logger.info({profile})
         try {
             const userName = profile.displayName || profile.username;
             const userEmail = profile._json.email;
@@ -96,7 +97,7 @@ const initializePassport = () => {
             const result = await userModel.create(newUser);
             return done(null, result);
         } catch (err) {
-            console.error('Error en el inicio de sesión con GitHub:', err);
+            logger.error('Error en el inicio de sesión con GitHub:', err);
             return done('Error en el inicio de sesión con GitHub');
         }
     }))

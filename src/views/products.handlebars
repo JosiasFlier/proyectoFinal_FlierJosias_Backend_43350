@@ -109,7 +109,7 @@
                   <button class="btn btn-outline-info" style="font-weight: bold;" href="http://localhost:8080/products/{{this._id}}">Info</button>
               </a>
 
-              <button class="btn btn-success" onclick="addProductToCart2(`{{this._id}}`, `{{userInfo.cartId}}`)">Añadir al carrito</button>
+              <button class="btn btn-success" onclick="addProductToCart2(`{{this._id}}`)" >Añadir al carrito</button>
             </div>
 
           </div>
@@ -122,55 +122,7 @@
 </div>
 
 
-{{!-- userInfo = {
-            first_name: req.session.user.first_name,
-            last_name: req.session.user.last_name,
-            fullName: `${req.session.user.first_name} ${req.session.user.last_name}`,
-            email: req.session.user.email,
-            age: req.session.user.age,
-            cartId: --}}
-
-
-
-
-{{!-- <script src="/socket.io/socket.io.js"></script> --}}
 <script src="/productDetail.js"></script>
-
-
-
-<style>
-  .custom-container {
-    padding: 4vw; /* Espacio de relleno interior del contenedor */
-  }
-
-  .card1 {
-    transition: transform 0.3s;
-    background-color: rgba(225, 225, 225, 0.812);"
-    border-color: #2B0206;
-    border-radius: 15px;
-  }
-
-  .filter-bar {
-    background-color: rgba(225, 225, 225, 0.812);"
-  }
-
-  .card-border {
-    border-color: #2B0206;
-  }
-
-  .card1:hover {
-    transform: scale(1.01);
-  }
-
-  .aligned-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%; 
-}
-
-
-</style>
 
 
 

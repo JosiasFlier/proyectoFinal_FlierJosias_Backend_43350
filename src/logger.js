@@ -13,9 +13,9 @@ const logLevels = {
 
 //Creo colores personalizados para el logger
 const colors ={
-    debug: 'white',
-    http: 'green',
-    info: 'blue',
+    debug: 'blue',
+    http: 'white',
+    info: 'green',
     warning: 'yellow',
     error: 'magenta',
     fatal: 'red'

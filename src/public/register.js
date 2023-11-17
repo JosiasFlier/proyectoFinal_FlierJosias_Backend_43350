@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(data.message)
 
         } catch (err) {
+            console.log(err.message);
             res.status(500).json({ status: 'error', message: err.message })
         }
     })

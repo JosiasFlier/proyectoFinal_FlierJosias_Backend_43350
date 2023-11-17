@@ -1,0 +1,53 @@
+/* MAIN */
+body {
+    background-image: url("https://i.ibb.co/qC2KRkB/fondo-Libros.jpg"); /* Ruta relativa a la imagen de fondo */
+    background-size: 100% auto; /* Ajusta el ancho de la imagen al ancho de la página y ajusta la altura automáticamente */
+    background-repeat: repeat-y; /* Repite la imagen verticalmente */
+}
+.card {
+    background-color: rgba(255, 255, 255, 0.5); /* Color de fondo de la tarjeta con opacidad */
+}
+
+.title-td {
+    background-color: #2b020c;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+    font-size: 3em;
+    font-style: italic;
+}
+
+.white-text {
+    color: white;
+}
+
+/* PRODUCTS DETAIL */
+.custom-container {
+    padding: 4vw; /* Espacio de relleno interior del contenedor */
+}
+
+.card1 {
+    transition: transform 0.3s;
+    background-color: rgba(225, 225, 225, 0.812);
+    border-color: #2b0206;
+    border-radius: 15px;
+}
+
+.filter-bar {
+    background-color: rgba(225, 225, 225, 0.812);
+}
+
+.card-border {
+    border-color: #2b0206;
+}
+
+.card1:hover {
+    transform: scale(1.01);
+}
+
+.aligned-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
