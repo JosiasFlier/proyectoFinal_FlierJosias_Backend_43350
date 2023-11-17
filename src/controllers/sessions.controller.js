@@ -1,4 +1,5 @@
 import UserDTO from "../dto/users.dto.js"
+import userModel from "../models/user.model.js";
 import logger from "../logger.js"
 
 // Controlador para la vista de registro
@@ -95,4 +96,21 @@ export const postRegisterController = async (req, res) => {
         logger.error(err.message);
         return res.status(500).json({ message: 'Error en el servidor.' });
     }
+}
+
+export const recoverPassController = async (req, res) => {
+    try {
+        const email = req.body.email
+
+        const user = await userModel.findOne({ email })
+        if(!user){ return res.status(404).json({status: 'error', error: 'User not found'})}
+        // Logica para mandar el email
+
+
+        return res.status(201).json({ status: 'success', message: `${email} se envio el mail de recuperacion correctamente`})
+    } catch (err) {
+        logger.error(err.message);
+        return res.status(500).json({ message: 'Error en al querer restablecer contraseña.' });
+    }
+    
 }

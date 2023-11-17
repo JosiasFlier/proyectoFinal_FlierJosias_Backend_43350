@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from 'passport';
 import { isLogged } from "../public/authenticationMidd.js";
-import { currentController, githubcallbackController, postLoginController, postRegisterController, userFailRegisterController, userLoginViewController, userLogoutController, userProfileViewController, userRegisterViewController } from "../controllers/sessions.controller.js";
+import { currentController, githubcallbackController, postLoginController, postRegisterController, recoverPassController, userFailRegisterController, userLoginViewController, userLogoutController, userProfileViewController, userRegisterViewController } from "../controllers/sessions.controller.js";
 
 const router = Router()
 
@@ -24,8 +24,10 @@ router.post('/login', passport.authenticate('login', { failureRedirect: '/sessio
 router.post('/register', passport.authenticate("register", { failureRedirect: "/sessions/failRegister" }), postRegisterController) // Ruta para el registro
 
 // Ruta para recuperar la contraseña
-router.get('/forget-password', async (req, res) => {
+router.get('/forget-pass', async (req, res) => {
     res.render('forgetPassword')
 })
+
+router.post('/forget-pass/recover-pass', recoverPassController)
 
 export default router

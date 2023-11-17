@@ -23,12 +23,16 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(data)
         
             if(response.ok) {
-                //Alerta de registro exitoso, y redireccionar a login
-                alert(`${first_name} te has registrado con exito`)
-                window.location.href = "/api/sessions/login"
+                //Alerta de registro exitoso, 
+                displayRegisterAlert(`${first_name} ${last_name}`)
+                
             }
-            //Agregar Sweet Alert
-            alert(data.message)
+
+            // redireccionar a login
+            setTimeout(() => {
+                window.location.href = "/api/sessions/login" 
+            }, 2500);
+
 
         } catch (err) {
             console.log(err.message);
@@ -43,4 +47,14 @@ document.addEventListener('DOMContentLoaded', () => {
         })
 
 })
+
+
+//Alerta de registro exitoso
+function displayRegisterAlert(name) {
+    Swal.fire({
+        title: name,
+        html: '<p>Te has registrado con éxito</p>',
+        icon: 'success'
+    });
+}
 
