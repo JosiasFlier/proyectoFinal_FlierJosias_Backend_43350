@@ -1,23 +1,22 @@
 
-
-const form = document.getElementById("forgetPasswordForm");
+//Formulario para crear nueeva contraseña y manejo de alertas
+const form = document.getElementById("resetPasswordForm");
 
 
 form.addEventListener("submit", async (evt) => {
     evt.preventDefault();
 
     // Capturo el Email del formulario
-    const email = document.querySelector("#email").value
-
-    console.log({"Email desde JS": email})
+    const newPassword = document.querySelector("#newPassword").value
+    const user = document.querySelector("#userName").value
 
     try {
-        const response = await fetch("/api/sessions/forget-pass/recover-pass", {
+        const response = await fetch(`/api/sessions/reset-password/${user}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ email }),
+            body: JSON.stringify({ newPassword }),
         });
 
         const data = await response.json()
@@ -25,19 +24,21 @@ form.addEventListener("submit", async (evt) => {
 
         if (response.ok) {
             //Alerta de registro exitoso, 
-            displayRecoverPassAlert(email)
+            displayResetPassAlert(user)
+            setTimeout(() => {
+                window.location.href = "/api/sessions/login" 
+            }, 4000);
 
         } else if (response.status === 404) {
             //Alerta de "usuario ya registrado"
-            notRegisterAlert(email)
+            notResetPassAlert(user)
             // Redireccion a "Registro"
-            setTimeout(() => {
-                window.location.href = "/api/sessions/register" 
-            }, 4000);
+            
         } else {
             errorAlert(email)
         }
-        
+
+
     } catch (error) {
         console.error("Error al enviar la solicitud:", error);
     }
@@ -45,19 +46,19 @@ form.addEventListener("submit", async (evt) => {
 
 
 //Alerta de email con restablecimiento de contraseña exitoso
-function displayRecoverPassAlert(email) {
+function displayResetPassAlert(email) {
     Swal.fire({
         title: email,
-        html: '<div><p>Revisa tu casilla de correo</p><p>Para restablecer contraseña</p></div>',
+        html: '<div><p>Contraseña restablecida</p><p>Por favor</p><p>Inicie sesión nuevamente</p></div>',
         icon: 'success'
     });
 }
 
 //Alerta de email no registrado
-function notRegisterAlert(email) {
+function notResetPassAlert(email) {
     Swal.fire({
         title: email,
-        html: '<div><p>No estás registrado</p><p>Por favor completa el</p><p>FORMULARIO DE REGISTRO</p></div>',
+        html: '<div><p>Contraseña igual a la anterior</p><p>Por favor</p><p>Elija otra</p></div>',
         icon: 'warning'
     });
 }
@@ -66,7 +67,7 @@ function notRegisterAlert(email) {
 function errorAlert() {
     Swal.fire({
         title: 'ERROR',
-        html: '<div><p>Error al querer recuperar</p><p>La cuenta</p></div>',
+        html: '<div><p>Error al querer cambiar</p><p>La contraseña</p></div>',
         icon: 'error'
     });
 }

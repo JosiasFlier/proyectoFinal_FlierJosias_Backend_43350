@@ -1,6 +1,11 @@
 import UserDTO from "../dto/users.dto.js"
 import userModel from "../models/user.model.js";
+import userPasswordModel from "../models/user-password.model.js";
 import logger from "../logger.js"
+import { generateRandomString } from "../public/functions.js";
+import bcrypt from 'bcryptjs'
+import nodemailer from 'nodemailer'
+import { NODEMAILER_PASS, NODEMAILER_USER } from '../utils.js'
 
 // Controlador para la vista de registro
 export const userRegisterViewController = async (req, res) => {
@@ -98,19 +103,86 @@ export const postRegisterController = async (req, res) => {
     }
 }
 
+//Ruta de recuperacion de contraseña con envio de mail
 export const recoverPassController = async (req, res) => {
     try {
-        const email = req.body.email
+        const email = req.body.email;
 
-        const user = await userModel.findOne({ email })
-        if(!user){ return res.status(404).json({status: 'error', error: 'User not found'})}
-        // Logica para mandar el email
+        const user = await userModel.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ status: 'error', error: 'User not found' });
+        }
 
+        const userName = user.first_name
 
-        return res.status(201).json({ status: 'success', message: `${email} se envio el mail de recuperacion correctamente`})
+        const token = generateRandomString(16); // Genero el token
+        logger.debug(token);
+
+        await userPasswordModel.create({ email, token }); // Creo el user-password
+
+        // Configuración y envío de correo
+        const mailerConfig = {
+            service: 'gmail',
+            auth: { user: NODEMAILER_USER, pass: NODEMAILER_PASS } // Asegúrate de que NODEMAILER_USER y NODEMAILER_PASS estén definidas
+        };
+
+        let transporter = nodemailer.createTransport(mailerConfig);
+        let message = {
+            from: NODEMAILER_USER,
+            to: email,
+            subject: 'TODO LIBROS - Restablecimiento de contraseña',
+            html: `<h1>${userName}, restablezca su contraseña en TODO LIBROS</h1>
+            <hr>Podrá crear una nueva contraseña en el siguiente link 
+            <a href="http://localhost:8080/api/sessions/verify-token/${token}" target="_blank">http://localhost:8080/api/sessions/verify-token/${token}</a>
+            <hr>
+            <p>El enlace solo estará activo por 60 minutos</p>
+            <hr>
+            Saludos cordiales<br>
+            <b>TODO LIBROS</b>`
+        };
+
+        await transporter.sendMail(message); //Envio de email
+        return res.status(201).json({ status: 'success', message: `${email} se envió el correo de recuperación correctamente` });
     } catch (err) {
         logger.error(err.message);
-        return res.status(500).json({ message: 'Error en al querer restablecer contraseña.' });
+        return res.status(500).json({ message: 'Error al intentar restablecer la contraseña.' });
     }
-    
+};
+
+// Ruta para verificar si el token de recuperacion es valido
+export const verifyTokenController = async (req, res) => {
+    const userPassword = await userPasswordModel.findOne({ token : req.params.token})
+    if (!userPassword) {
+        return res.status(404).json({ status: 'error', error: 'Token no valido - El token expiró', message: 'Por favor, realize el proceso nuevamente'})
+    }
+
+    const user = userPassword.email
+    res.render('resetPassword', { user })
+}
+
+//Ruta para restablecer la contraseña
+export const resetPasswordController = async (req, res) => {
+    try {
+        const email = req.params.user
+        console.log(email)
+        const user = await userModel.findOne({ email: req.params.user })
+        const newPassword = req.body.newPassword; //Obtengo la nueva contraseña desde el body
+
+        //Comparo si la contraseña nueva, es igual a la anterior.
+        const passwordsMatch = bcrypt.compareSync(newPassword, user.password);
+        if (passwordsMatch) { return res.status(404).json({ status: 'error', message: 'Contraseña igual a la anterior' });}
+
+        //Restablezco la contraseña
+        await userModel.findByIdAndUpdate(user._id, { password: await bcrypt.hash(newPassword, 10) })
+
+        //Elimino la userPassword ya utilizada
+        await userPasswordModel.deleteOne({ email: email })
+
+        return res.status(201).json({ status: 'success', message: 'Se ha restablecido la contraseña' })
+
+
+    } catch (err) {
+        logger.error(err.message);
+        return res.status(500).json({ status: 'error', message: 'No se ha podido restablecer la contraseña' })
+    }
 }

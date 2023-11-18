@@ -9,6 +9,11 @@ body {
     border-radius: 10px;
 }
 
+.card-pass {
+    background-color: rgba(238, 163, 0, 0.587); /* Color de fondo de la tarjeta con opacidad */
+    border-radius: 10px;
+}
+
 .title-background{
     background-color:#350222;
 }
