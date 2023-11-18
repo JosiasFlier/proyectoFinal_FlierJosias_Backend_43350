@@ -1,24 +1,26 @@
-import express, { urlencoded } from "express";
+import express, { urlencoded } from "express"
 import session from 'express-session'
-import MongoStore from "connect-mongo";
-import mongoose from "mongoose";
-import handlebars from "express-handlebars";
-import { Server } from "socket.io";
-import passport from "passport";
+import MongoStore from "connect-mongo"
+import mongoose from "mongoose"
+import handlebars from "express-handlebars"
+import { Server } from "socket.io"
+import passport from "passport"
 import initializePassport from "./config/passport.config.js"
 import errorHandler from './middlewares/error.middleware.js'
-import logger from "./logger.js";
+import logger from "./logger.js"
+import swaggerJSDoc from "swagger-jsdoc"
+import swaggerUiExpress from "swagger-ui-express"
 
 // ROUTERS
-import productsRouter from "./routes/products.router.js";
-import cartRouter from "./routes/carts.router.js";
-import viewsRouter from "./routes/views.router.js";
+import productsRouter from "./routes/products.router.js"
+import cartRouter from "./routes/carts.router.js"
+import viewsRouter from "./routes/views.router.js"
 import sessionsRouter from "./routes/sessions.router.js"
 import mailsRouter from './routes/mails.router.js'
 import mockingRouter from './routes/mocking.router.js'
 
-import { PORT, MONGO_DB_NAME, MONGO_URI } from "./utils.js";
-import { isLogged } from "./public/authenticationMidd.js";
+import { PORT, MONGO_DB_NAME, MONGO_URI } from "./utils.js"
+import { isLogged } from "./public/authenticationMidd.js"
 
 
 const app = express();
@@ -50,6 +52,21 @@ app.use(passport.session());
 app.engine("handlebars", handlebars.engine());
 app.set("views", "./src/views");
 app.set("view engine", "handlebars");
+
+// Configuracion de Swagger
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación de la API del Ecommerce',
+            description: 'Proyecto de un Eccomerce de libros'
+        }
+    },
+    apis: ['./docs/**/*.yaml']
+};
+
+const specs = swaggerJSDoc(swaggerOptions)
+app.use('/docs',swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 
 try {

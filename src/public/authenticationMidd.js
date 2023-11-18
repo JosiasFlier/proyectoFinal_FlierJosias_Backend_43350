@@ -13,6 +13,14 @@ const isAdmin = (req, res, next) => {
 }
 
 
+// Middleware para verificar si el usuario es premium
+const isPremium = (req, res, next) => {
+    if(req.isAuthenticated() && req.user.role === 'premium') return next()
+    res.status(403).json({ message: 'No tiene autorización para esta seccion' });
+}
+
+
+
 // Función para verificar credenciales de administrador
 const isAuthorizedAdmin = (email) => {
     const authorizedEmails = [
@@ -23,7 +31,7 @@ const isAuthorizedAdmin = (email) => {
 }
 
 
-export { isLogged, isAdmin, isAuthorizedAdmin }
+export { isLogged, isAdmin, isPremium, isAuthorizedAdmin }
 
 
 
