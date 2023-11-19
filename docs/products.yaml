@@ -1,0 +1,124 @@
+paths:
+    /products:
+        get:
+            summary: Obtener todos los productos paginados
+            tags:
+                - Products
+            responses:
+                "200":
+                    description: Éxito. Devuelve la lista de productos paginados.
+                "500":
+                    description: Error del servidor. No se pudieron obtener los productos.
+
+        post:
+            summary: Crear un nuevo producto
+            tags:
+                - Products
+            requestBody:
+                description: Datos del nuevo producto
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Product"
+            responses:
+                "201":
+                    description: Producto creado con éxito.
+                "400":
+                    description: Solicitud incorrecta. Verifique los datos del producto.
+                "500":
+                    description: Error del servidor. No se pudo crear el producto.
+
+    /products/{pid}:
+        get:
+            summary: Obtener un producto por ID
+            tags:
+                - Products
+            parameters:
+                - name: pid
+                  in: path
+                  required: true
+                  description: ID del producto a obtener.
+                  schema:
+                      type: string
+            responses:
+                "200":
+                    description: Éxito. Devuelve el producto solicitado.
+                "404":
+                    description: Producto no encontrado.
+
+        put:
+            summary: Actualizar un producto por ID
+            tags:
+                - Products
+            parameters:
+                - name: pid
+                  in: path
+                  required: true
+                  description: ID del producto a actualizar.
+                  schema:
+                      type: string
+            requestBody:
+                description: Nuevos datos del producto
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Product"
+            responses:
+                "201":
+                    description: Producto actualizado con éxito.
+                "404":
+                    description: Producto no encontrado.
+                "500":
+                    description: Error del servidor. No se pudo actualizar el producto.
+
+        delete:
+            summary: Eliminar un producto por ID
+            tags:
+                - Products
+            parameters:
+                - name: pid
+                  in: path
+                  required: true
+                  description: ID del producto a eliminar.
+                  schema:
+                      type: string
+            responses:
+                "201":
+                    description: Producto eliminado con éxito.
+                "404":
+                    description: Producto no encontrado.
+                "500":
+                    description: Error del servidor. No se pudo eliminar el producto.
+
+components:
+    schemas:
+        Product:
+            type: object
+            properties:
+                title:
+                    type: string
+                description:
+                    type: string
+                price:
+                    type: number
+                thumbnails:
+                    type: array
+                    items:
+                        type: string
+                code:
+                    type: string
+                stock:
+                    type: number
+                category:
+                    type: string
+                status:
+                    type: boolean
+            required:
+                - title
+                - description
+                - price
+                - code
+                - stock
+                - category

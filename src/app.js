@@ -59,7 +59,7 @@ const swaggerOptions = {
         openapi: '3.0.1',
         info: {
             title: 'Documentación de la API del Ecommerce',
-            description: 'Proyecto de un Eccomerce de libros'
+            description: 'Proyecto de un Ecommerce de libros'
         }
     },
     apis: ['./docs/**/*.yaml']
