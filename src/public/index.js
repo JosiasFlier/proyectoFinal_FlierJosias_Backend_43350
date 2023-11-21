@@ -13,6 +13,7 @@ form.addEventListener("submit", async (evt) => {
     let product = {
         title: document.querySelector("#title").value,
         description: document.querySelector("#description").value,
+        thumbnails: document.querySelector("#thumbnails").value,
         price: document.querySelector("#price").value,
         code: document.querySelector("#code").value,
         category: document.querySelector("#category").value,

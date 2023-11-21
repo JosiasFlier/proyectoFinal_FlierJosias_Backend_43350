@@ -1,6 +1,7 @@
 import { ProductService } from "../services/products.service.js";
 import productModel from "../models/products.model.js";
 import cartModel  from "../models/carts.model.js";
+import userModel from "../models/user.model.js";
 import logger from "../logger.js";
 import { Logger } from "winston";
 
@@ -49,7 +50,10 @@ export const getProductController = async (req, res) => {
         // const products = await productModel.paginate(filter, options);
         const products = await ProductService.getAllPaginateView(filter, options);
 
-        res.render("products", { products, userInfo });
+        let admin = true
+        let premium = true
+
+        res.render("products", { products, userInfo, admin, premium });
     } catch (err) {
         logger.error("Error al obtener todos los productos", err)
         res.status(500).json({ error: err });
@@ -95,7 +99,6 @@ export const getHomeController = async (req, res) => {
 // Controlador para obtener una lista de todos los productos en tiempo real
 export const realTimeProductsController = async (req, res) => {
     try {
-        // const allProducts = await productModel.find().lean().exec();
         const allProducts = await ProductService.getAll()
         const userInfo = {
             first_name: req.session.user.first_name,
@@ -136,7 +139,7 @@ export const productDetailController = async (req, res) => {
 
         res.render("productDetail", {product, userInfo});
     } catch (err) {
-        logger.error("Error al obtener los detalles del producto", err)
+        logger.error("Error al obtener los detalles del producto ACA EL ERROR", err)
         res.status(500).json({ error: "Error al leer los productos", Error: err });
     }
 }

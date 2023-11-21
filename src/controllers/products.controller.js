@@ -41,7 +41,9 @@ export const getProductByIdController = async (req, res) => {
 //Crear un nuevo producto
 export const createProductController = async (req, res) => {
     try {
-        const product = req.body //Obtiene los datos del producto
+        // const product = {...req.body, owner: req.user.email || "admin"} //Obtiene los datos del producto
+
+        const product = req.body
 
         if (!product.title || !product.price || !product.description || !product.code  || !product.stock || !product.category){
             CustomError.createError({

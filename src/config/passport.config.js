@@ -59,6 +59,11 @@ const initializePassport = () => {
                     const isPasswordValid = bcrypt.compareSync(password, user.password);
                     if (!isPasswordValid) return done(null, false, { message: "Credenciales inválidas.",});
 
+                    user.last_connection = new Date();
+                    await userModel.findByIdAndUpdate(user._id, {
+                        last_connection: user.last_connection,
+                    });
+
                     return done(null, user);
                 } catch (error) {
                     logger.error("Error en el proceso de autenticación:", error);

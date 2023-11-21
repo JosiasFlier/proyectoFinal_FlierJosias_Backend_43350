@@ -19,19 +19,28 @@ const isPremium = (req, res, next) => {
     res.status(403).json({ message: 'No tiene autorización para esta seccion' });
 }
 
+// Middleware para verificar roles autorizados (premium o admin)
+const checkRole = (req, res, next) => {
+    if (req.isAuthenticated() && (req.user.role === 'admin' || req.user.role === 'premium')) {
+        return next();
+    }
+    res.status(403).json({ message: 'No tiene autorización para esta sección' });
+};
+
 
 
 // Función para verificar credenciales de administrador
 const isAuthorizedAdmin = (email) => {
     const authorizedEmails = [
         'adminCoder@coder.com',
-        'jaf937@gmail.com'
+        'jaf937@gmail.com',
+        'alexmarinmendez@gmail.com'
     ]
     return authorizedEmails.includes(email)
 }
 
 
-export { isLogged, isAdmin, isPremium, isAuthorizedAdmin }
+export { isLogged, isAdmin, isPremium, checkRole, isAuthorizedAdmin }
 
 
 

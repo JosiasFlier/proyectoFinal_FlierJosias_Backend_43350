@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { isAdmin, isLogged } from "../public/authenticationMidd.js";
-import { cartController, getHomeController, getProductController, productDetailController, realTimeProductsController } from "../controllers/views.controller.js";
+import { cartController, getHomeController, getProductController, productDetailController, realTimeProductsController} from "../controllers/views.controller.js";
 
 const router = Router();
 

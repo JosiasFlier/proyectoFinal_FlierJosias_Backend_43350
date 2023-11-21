@@ -186,3 +186,25 @@ export const resetPasswordController = async (req, res) => {
         return res.status(500).json({ status: 'error', message: 'No se ha podido restablecer la contraseña' })
     }
 }
+
+
+// Controlador para obtener una lista de todos los usuarios
+export const usersController = async (req, res) => {
+    try {
+
+        const allUsers = await userModel.find().lean().exec()
+        const userInfo = {
+            first_name: req.session.user.first_name,
+            last_name: req.session.user.last_name,
+            fullName: `${req.session.user.first_name} ${req.session.user.last_name}`,
+            email: req.session.user.email,
+            age: req.session.user.age,
+            cartId: req.session.user.cart,
+            role: req.session.user.role
+        };
+        res.render("users", { users: allUsers, userInfo });
+    } catch (err) {
+        logger.error("Error al obtener la lista de usuarios", err)
+        res.status(500).json({ error: err });
+    }
+}

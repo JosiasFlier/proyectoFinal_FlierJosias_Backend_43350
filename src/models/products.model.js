@@ -7,11 +7,12 @@ const productSchema = mongoose.Schema({
     title: { type: String, required: true },
     description: { type: String, required: true },
     price: { type: Number, required: true },
-    thumbnails: { type: [String], default: [] },
+    thumbnails: { type: [String], default: ['https://vreditoras.com.ar//uploads/libros/0ac3c831d14e392757a800907209255eLas-pruebas-del-sol-TAPA-WEB.jpg'] }, //URL con imagen de Libro para pruebas 
     code: { type: String, required: true, unique: true },
     stock: { type: Number, required: true },
     category: { type: String, required: true },
     status: { type: Boolean, default: true },
+    // owner: { type: String, default: "admin" } //Para saber quien es el dueño del producto
 });
 
 

@@ -1,0 +1,45 @@
+<div class="container">
+    <table class="table table-bordered table-striped table-hover mt-5 text-center align-middle" id="productsTable">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Edad</th>
+                <th>Rol</th>
+                <th>Actualizar Rol</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+            {{#each users}}
+                <tr>
+                    <td>{{this.first_name}}</td>
+                    <td>{{this.last_name}}</td>
+                    <td>{{this.email}}</td>
+                    <td>{{this.age}}</td>
+                    <td>{{this.role}}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm">Premium</button>
+                        <button class="btn btn-primary btn-sm"> Admin </button>
+                    </td>
+                    <td>
+                        <button
+                            class="btn btn-danger"
+                            onclick="deleteUser('{{this._id}}')"
+                        >
+                            ❌
+                        </button>
+                    </td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <div class="container text-center">
+        <div class="mt-5">
+            <a href="#" class="btn btn-secondary btn-lg btn-block">Eliminar los usarios que llevan 48 hs inactivos</a>
+        </div>
+    </div>
+</div>
+
+<script src="/users.js"></script>
