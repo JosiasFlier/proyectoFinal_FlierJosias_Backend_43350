@@ -2,7 +2,7 @@ import { ProductService } from "../services/products.service.js";
 import productModel from "../models/products.model.js";
 import cartModel  from "../models/carts.model.js";
 import userModel from "../models/user.model.js";
-import logger from "../logger.js";
+import { logger } from "../logger.js";
 import { Logger } from "winston";
 
 // Controlador para obtener una lista de productos con filtros opcionales
@@ -47,11 +47,15 @@ export const getProductController = async (req, res) => {
             role: req.session.user.role
         };
 
-        // const products = await productModel.paginate(filter, options);
         const products = await ProductService.getAllPaginateView(filter, options);
 
-        let admin = true
-        let premium = true
+        //Bolleanos para las vistas del navBar
+        let admin
+        let premium
+        if (userInfo) {
+            admin = userInfo?.role === "admin" ? true : false;
+            premium = userInfo?.role === "premium" ? true : false;
+        }
 
         res.render("products", { products, userInfo, admin, premium });
     } catch (err) {
@@ -89,7 +93,15 @@ export const getHomeController = async (req, res) => {
             role: req.session.user.role
         };
 
-        res.render("home", { products, userInfo });
+        //Bolleanos para las vistas del navBar
+        let admin
+        let premium
+        if (userInfo) {
+            admin = userInfo?.role === "admin" ? true : false;
+            premium = userInfo?.role === "premium" ? true : false;
+        }
+
+        res.render("home", { products, userInfo, admin, premium });
     } catch (err) {
         logger.error("Error al leer los productos:", err);
         res.status(500).json({ error: "Error al leer los productos", Error: err });
@@ -109,7 +121,16 @@ export const realTimeProductsController = async (req, res) => {
             cartId: req.session.user.cart,
             role: req.session.user.role
         };
-        res.render("realTimeProducts", { products: allProducts, userInfo });
+
+        //Bolleanos para las vistas del navBar
+        let admin
+        let premium
+        if (userInfo) {
+            admin = userInfo?.role === "admin" ? true : false;
+            premium = userInfo?.role === "premium" ? true : false;
+        }
+
+        res.render("realTimeProducts", { products: allProducts, userInfo, admin, premium });
     } catch (err) {
         logger.error("Error al obtener la lista de productos", err)
         res.status(500).json({ error: err });
@@ -137,7 +158,15 @@ export const productDetailController = async (req, res) => {
             role: req.session.user.role
         };
 
-        res.render("productDetail", {product, userInfo});
+        //Bolleanos para las vistas del navBar
+        let admin
+        let premium
+        if (userInfo) {
+            admin = userInfo?.role === "admin" ? true : false;
+            premium = userInfo?.role === "premium" ? true : false;
+        }
+
+        res.render("productDetail", {product, userInfo, admin, premium});
     } catch (err) {
         logger.error("Error al obtener los detalles del producto ACA EL ERROR", err)
         res.status(500).json({ error: "Error al leer los productos", Error: err });
@@ -163,8 +192,15 @@ export const cartController = async (req, res) => {
             role: req.session.user.role
         };
 
+        //Bolleanos para las vistas del navBar
+        let admin
+        let premium
+        if (userInfo) {
+            admin = userInfo?.role === "admin" ? true : false;
+            premium = userInfo?.role === "premium" ? true : false;
+        }
 
-        res.render('carts', { cid: result._id, cart: result.products, userInfo});
+        res.render('carts', { cid: result._id, cart: result.products, userInfo, admin, premium });
     } catch (err) {
         logger.error("Error al obtener los datos del carrito", err)
         res.status(500).json({ status: 'error', error: err.message });

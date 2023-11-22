@@ -12,7 +12,7 @@ const productSchema = mongoose.Schema({
     stock: { type: Number, required: true },
     category: { type: String, required: true },
     status: { type: Boolean, default: true },
-    // owner: { type: String, default: "admin" } //Para saber quien es el dueño del producto
+    owner: { type: String, default: "admin" } //Para saber quien es el dueño del producto
 });
 
 

@@ -3,7 +3,7 @@ import localStrategy  from "passport-local";
 import GithubStrategy from 'passport-github2';
 import userModel  from "../models/user.model.js"
 import cartModel from "../models/carts.model.js";
-import logger from "../logger.js";
+import { logger } from "../logger.js";
 
 import bcrypt from "bcryptjs";
 import { isAuthorizedAdmin } from "../public/authenticationMidd.js";
@@ -118,19 +118,3 @@ const initializePassport = () => {
 }
 
 export default initializePassport
-
-
-
-//REGISTER
-//Obtengo todos los datos del usuario y se guardan en la session.
-            // const userSession = {
-            //     _id: savedUser.id,
-            //     first_name: savedUser.first_name,
-            //     last_name: savedUser.last_name,
-            //     email: savedUser.email,
-            //     age: savedUser.age,
-            //     role: savedUser.role,
-            // }
-    
-            // // Almacenar toda la información del usuario en la sesión
-            // req.session.user = userSession

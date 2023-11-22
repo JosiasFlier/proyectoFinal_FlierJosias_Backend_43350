@@ -56,6 +56,12 @@ const createLogger = env => {
     }
 }
 
+
+const loggerHttp = (req, res, next) => {
+    logger.info(`[${new Date().toLocaleTimeString()}] ${req.url} - ${req.method}`)
+    next()
+}
+
 const logger = createLogger(process.env.ENVIRONMENT)
 
-export default logger
+export { logger, loggerHttp }

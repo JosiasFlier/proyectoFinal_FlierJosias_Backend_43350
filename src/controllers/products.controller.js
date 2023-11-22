@@ -2,7 +2,8 @@ import CustomError from "../services/errors/custom_errors.js";
 import EErrors from "../services/errors/enums.js";
 import { generateProductErrorInfo } from "../services/errors/info.js";
 import { ProductService } from "../services/products.service.js";
-import logger from "../logger.js";
+import { logger } from "../logger.js";
+import { deleteProductEmail } from "./mails.controller.js";
 
 // Función para obtener todos los productos
 const getAllProducts = async () => {
@@ -41,9 +42,9 @@ export const getProductByIdController = async (req, res) => {
 //Crear un nuevo producto
 export const createProductController = async (req, res) => {
     try {
-        // const product = {...req.body, owner: req.user.email || "admin"} //Obtiene los datos del producto
+        const product = {...req.body, owner: req.user.email || "admin"} //Obtiene los datos del producto
 
-        const product = req.body
+        // const product = req.body
 
         if (!product.title || !product.price || !product.description || !product.code  || !product.stock || !product.category){
             CustomError.createError({
@@ -97,23 +98,33 @@ export const updatedProductController = async (req, res) => {
 export const deleteProductController = async (req, res) =>  {
     try {
         const pid = req.params.pid // Obtengo el id
+        const userInfo = {email: req.session.user.email, role: req.session.user.role};
 
-        // Elimina el producto con el id (pid)
-        const deleteProduct = await ProductService.delete(pid)
+        // Obtener los datos del producto
+        const product = await ProductService.getByIdViews(pid);
+        const owner = product.owner
 
-        if (!deleteProduct)  return res.status(404).json({ error: `Producto con ID: '${pid}' no encontrado` })
+        //Verifico si el producto existe
+        if (!product) {return res.status(404).json({ error: 'Producto no encontrado en la base de datos' });}
+
+        //Verifico si es admin, o el dueño del producto
+        if (userInfo.role === 'admin' || product.owner === userInfo.email) {
+            const deleteProduct = await ProductService.delete(pid)// Elimina el producto con el id (pid)
+            if (!deleteProduct)  return res.status(404).json({ error: `Producto con ID: '${pid}' no encontrado` })
+            
+            // Envia un email al dueño del producto
+            const sendEmail = await deleteProductEmail(product, owner);
+        }
 
         // Busca todos los productos actualizados para enviarlos a través de Socket.io
         const products = await getAllProducts();
 
         // Emite un evento de Socket.io para informar sobre los productos actualizados
         req.app.get("socketio").emit("updatedProducts", products)
-        res.status(201).json({ status: "Producto eliminado con éxito", payload: deleteProduct })
+        res.status(201).json({ status: "Producto eliminado con éxito", payload: product })
 
     } catch (err) {
-        logger.error("Error al eliminar el producto", err)
+        logger.error(`Error al eliminar el producto", ${err.message}`)
         res.status(500).json({ status: "Error al eliminar el producto", error: err.message })
     }
 }
-
-

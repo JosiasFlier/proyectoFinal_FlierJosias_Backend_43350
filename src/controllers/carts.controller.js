@@ -2,7 +2,8 @@ import { CartService } from "../services/carts.service.js";
 import { ProductService } from "../services/products.service.js";
 import ticketModel from "../models/tickets.model.js";
 import userModel from "../models/user.model.js";
-import logger from "../logger.js";
+import { logger } from "../logger.js";
+import { UserService } from "../services/users.service.js";
 
 // Función para obtener un carrito por su ID
 const getCartById = async (id) => {
@@ -59,6 +60,15 @@ export const newProductForCartController = async (req, res) => {
         const cartId = req.params.cid;
         const productId = req.params.pid;
 
+        // Obtener los datos del usuario y del producto, para comparaciones
+        const userInfo = {email: req.session.user.email, role: req.session.user.role};
+        const productData = await ProductService.getByIdViews(productId);
+        const owner = productData.owner
+
+        // console.log("USER INFO:", userInfo)
+        // console.log("PRODUCT INFO:", productData)
+        // console.log("OWNER INFO:", owner)
+
         // Busca el carrito
         const cart = await getCartById(cartId);
         if (!cart)
@@ -72,6 +82,11 @@ export const newProductForCartController = async (req, res) => {
             return res
                 .status(404)
                 .json({ error: `producto con ID: ${productId} no encontrado` });
+
+        //Verifico si es premium y dueño del producto
+        if (owner == userInfo.email && userInfo.role == 'premium'){
+            return res.status(404).json({code: 1, error: 'No puedes agregar tu producto al carrito' });  
+        }
 
         // Verifica si el producto ya existe en el carrito
         const productExistsInCart = await cart.products.findIndex((item) =>

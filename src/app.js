@@ -7,9 +7,9 @@ import { Server } from "socket.io"
 import passport from "passport"
 import initializePassport from "./config/passport.config.js"
 import errorHandler from './middlewares/error.middleware.js'
-import logger from "./logger.js"
 import swaggerJSDoc from "swagger-jsdoc"
 import swaggerUiExpress from "swagger-ui-express"
+import { logger, loggerHttp } from "./logger.js"
 
 // ROUTERS
 import productsRouter from "./routes/products.router.js"
@@ -17,6 +17,7 @@ import cartRouter from "./routes/carts.router.js"
 import viewsRouter from "./routes/views.router.js"
 import sessionsRouter from "./routes/sessions.router.js"
 import mailsRouter from './routes/mails.router.js'
+import usersRouter from './routes/users.router.js'
 import mockingRouter from './routes/mocking.router.js'
 
 import { PORT, MONGO_DB_NAME, MONGO_URI } from "./utils.js"
@@ -27,6 +28,7 @@ const app = express();
 app.use(express.json()); //Para que lea los datos en JSON
 app.use(errorHandler) // Midd con mensaje de error
 app.use(urlencoded({ extended: true }));
+app.use(loggerHttp) //Loger info para cualquier endpoint
 
 // Configuración de la sesión
 app.use(session({
@@ -96,7 +98,8 @@ try {
     
     // Ruta para renderizar las vistas de handlebars
     app.use('/api/sessions', sessionsRouter); //sesiones
-    app.use("/products", viewsRouter); 
+    app.use("/products", viewsRouter);
+    app.use('/api/users', usersRouter); // Manejo de Usuarios 
 
     // Ruta para el envio de e-mails
     app.use('/email', mailsRouter)

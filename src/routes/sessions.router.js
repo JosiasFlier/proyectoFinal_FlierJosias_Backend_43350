@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from 'passport';
 import { isAdmin, isLogged } from "../public/authenticationMidd.js";
-import { currentController, githubcallbackController, postLoginController, postRegisterController, recoverPassController, resetPasswordController, userFailRegisterController, userLoginViewController, userLogoutController, userProfileViewController, userRegisterViewController, usersController, verifyTokenController } from "../controllers/sessions.controller.js";
+import { currentController, githubcallbackController, postLoginController, postRegisterController, recoverPassController, resetPasswordController, userFailRegisterController, userLoginViewController, userLogoutController, userProfileViewController, userRegisterViewController, verifyTokenController } from "../controllers/sessions.controller.js";
 
 const router = Router()
 
@@ -28,9 +28,5 @@ router.get('/forget-pass', async (req, res) => {res.render('forgetPassword')})//
 router.post('/forget-pass/recover-pass', recoverPassController) //Ruta para enviar mail de restablecimiento
 router.get('/verify-token/:token', verifyTokenController)//Ruta que verifica si el token es Valido
 router.post('/reset-password/:user', resetPasswordController)
-
-//Ruta para el manejo de usuarios
-router.get('/users', isLogged, isAdmin, usersController) // Listado de usuarios activos
-
 
 export default router

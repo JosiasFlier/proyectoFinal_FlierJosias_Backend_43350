@@ -1,7 +1,7 @@
 import UserDTO from "../dto/users.dto.js"
 import userModel from "../models/user.model.js";
 import userPasswordModel from "../models/user-password.model.js";
-import logger from "../logger.js"
+import { logger } from "../logger.js"
 import { generateRandomString } from "../public/functions.js";
 import bcrypt from 'bcryptjs'
 import nodemailer from 'nodemailer'
@@ -34,8 +34,17 @@ export const userProfileViewController = async (req, res) => {
         fullName: `${req.session.user.first_name} ${req.session.user.last_name}`,
         role: req.session.user.role
     }
-    logger.info({userInfo})
-    res.render('profile', {userData, userInfo})
+    logger.info(JSON.stringify(userInfo))
+
+    //Bolleanos para las vistas del navBar
+    let admin
+    let premium
+    if (userInfo) {
+        admin = userInfo?.role === "admin" ? true : false;
+        premium = userInfo?.role === "premium" ? true : false;
+    }
+
+    res.render('profile', {userData, userInfo, admin, premium})
 }
 
 // Controlador para cerrar sesión
@@ -188,23 +197,3 @@ export const resetPasswordController = async (req, res) => {
 }
 
 
-// Controlador para obtener una lista de todos los usuarios
-export const usersController = async (req, res) => {
-    try {
-
-        const allUsers = await userModel.find().lean().exec()
-        const userInfo = {
-            first_name: req.session.user.first_name,
-            last_name: req.session.user.last_name,
-            fullName: `${req.session.user.first_name} ${req.session.user.last_name}`,
-            email: req.session.user.email,
-            age: req.session.user.age,
-            cartId: req.session.user.cart,
-            role: req.session.user.role
-        };
-        res.render("users", { users: allUsers, userInfo });
-    } catch (err) {
-        logger.error("Error al obtener la lista de usuarios", err)
-        res.status(500).json({ error: err });
-    }
-}

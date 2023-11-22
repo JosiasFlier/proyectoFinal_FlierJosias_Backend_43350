@@ -1,4 +1,11 @@
 <div class="container">
+    <hr>
+    <div class="card">
+        <div class="card-header titles-log-reg text-center text-white m-2">
+            <h2>Panel de Usuarios</h2>
+        </div>
+    </div>
+    <hr />
     <table class="table table-bordered table-striped table-hover mt-5 text-center align-middle" id="productsTable">
         <thead class="table-dark">
             <tr>
@@ -20,8 +27,7 @@
                     <td>{{this.age}}</td>
                     <td>{{this.role}}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm">Premium</button>
-                        <button class="btn btn-primary btn-sm"> Admin </button>
+                        <button class="btn btn-warning btn-sm" onclick="makePremium('{{this._id}}','{{this.email}}')">Premium</button>
                     </td>
                     <td>
                         <button
@@ -37,7 +43,7 @@
     </table>
     <div class="container text-center">
         <div class="mt-5">
-            <a href="#" class="btn btn-secondary btn-lg btn-block">Eliminar los usarios que llevan 48 hs inactivos</a>
+            <a onclick="removeInactiveUsers()" class="btn btn-secondary btn-lg btn-block">Eliminar los usarios que llevan 48 hs inactivos</a>
         </div>
     </div>
 </div>

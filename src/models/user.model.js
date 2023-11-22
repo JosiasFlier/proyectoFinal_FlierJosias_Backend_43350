@@ -11,6 +11,7 @@ const userSchema = mongoose.Schema({
     password: { type: String, required: true },
     cart: { type: mongoose.Schema.Types.ObjectId, ref: 'carts'},
     role: { type: String, default: "usuario"},
+    status: { type: Boolean, default: true },
     last_connection: { type: Date, default: Date.now },
 })
 
